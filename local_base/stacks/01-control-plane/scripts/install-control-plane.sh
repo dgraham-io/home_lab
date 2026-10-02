@@ -102,6 +102,15 @@ fi
 apt-mark hold kubelet kubeadm kubectl >/dev/null
 systemctl enable kubelet
 
+# Raspberry Pi OS often has UFW active with only SSH allowed. kubectl from the LAN
+# needs the API port. Leave the firewall alone when it is not already enabled.
+if command -v ufw >/dev/null && ufw status | grep -q '^Status: active'; then
+  lan_cidr="$(ip -4 -o addr show scope global | awk '$2 != "flannel.1" { print $4; exit }')"
+  if [[ -n "$lan_cidr" ]]; then
+    ufw allow from "$lan_cidr" to any port 6443 proto tcp comment "kubernetes api"
+  fi
+fi
+
 install -d -m 0755 /etc/kubernetes
 install -m 0600 /var/lib/home-lab/kubeadm-config.yaml /etc/kubernetes/kubeadm-config.yaml
 

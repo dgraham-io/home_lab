@@ -14,7 +14,7 @@ ssh_base=(
   -o ConnectTimeout=5
 )
 
-if ! status="$("${ssh_base[@]}" "$SSH_TARGET" 'if [ -f /var/lib/home-lab/reboot-required ]; then echo yes; else echo no; fi')"; then
+if ! status="$("${ssh_base[@]}" "$SSH_TARGET" 'if sudo -n test -f /var/lib/home-lab/reboot-required; then echo yes; else echo no; fi')"; then
   echo "ssh to ${SSH_TARGET} failed before the reboot check" >&2
   exit 1
 fi
