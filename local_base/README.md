@@ -11,9 +11,9 @@ This is a small configuration using a Raspberry Pi 5 as a kubernetes control pla
   - 512GB SSD
 
 ## Software
-Raspberry Pi OS (64-bit) on the Pi
-Ubuntu 26.04.1 LTS on the Dell
-Terraform v1.15.9
+- Raspberry Pi OS (64-bit) on the Pi
+- Ubuntu 26.04.1 LTS on the Dell
+- Terraform v1.15.9
 
 
 ```bash
