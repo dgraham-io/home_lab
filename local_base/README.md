@@ -1,4 +1,4 @@
-# A simple base lab configuration using minimal hardware
+## A simple base lab configuration using minimal hardware
 
 This is a small configuration using a Raspberry Pi 5 as a kubernetes control plane, and a Linux server for workers.
 
@@ -15,6 +15,7 @@ This is a small configuration using a Raspberry Pi 5 as a kubernetes control pla
 - Ubuntu 26.04.1 LTS on the Dell
 - Terraform v1.15.9
 
+## Install
 
 ```bash
 cd local_base/stacks/01-control-plane
