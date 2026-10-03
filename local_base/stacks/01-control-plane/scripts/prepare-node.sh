@@ -11,6 +11,7 @@ has_arg() {
 install -d -m 0700 /var/lib/home-lab
 install -m 0755 /tmp/prepare-node.sh /var/lib/home-lab/prepare-node.sh
 install -m 0755 /tmp/install-control-plane.sh /var/lib/home-lab/install-control-plane.sh
+install -m 0755 /tmp/configure-ufw.sh /var/lib/home-lab/configure-ufw.sh
 install -m 0600 /tmp/kubeadm-config.yaml /var/lib/home-lab/kubeadm-config.yaml
 install -m 0644 /tmp/kube-flannel.yml /var/lib/home-lab/kube-flannel.yml
 

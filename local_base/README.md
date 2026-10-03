@@ -30,6 +30,12 @@ terraform apply -var-file=../../inventory/terraform.tfvars
 
 The admin kubeconfig and a 24-hour worker join command are written under `stacks/01-control-plane/.generated/`. `terraform destroy` forgets the Terraform resource and leaves the cluster installed.
 
+If UFW is already enabled on the Pi, that install opens the API, etcd, kubelet, Flannel, MetalLB, node-exporter, and NodePort ports, and it allows pod and service traffic. It does not turn UFW on. For a Pi that is already running:
+
+```bash
+local_base/scripts/configure-pi-ufw.sh <pi-host> <ssh-user>
+```
+
 `02-workers` joins lab1 and lab2. Add their addresses and memory to `inventory/terraform.tfvars`, then:
 
 ```bash

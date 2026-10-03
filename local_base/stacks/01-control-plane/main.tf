@@ -153,6 +153,7 @@ resource "null_resource" "control_plane" {
     kubeadm_config = local.kubeadm_config
     prepare        = file("${path.module}/scripts/prepare-node.sh")
     install        = file("${path.module}/scripts/install-control-plane.sh")
+    ufw            = file("${path.module}/scripts/configure-ufw.sh")
     wait           = file("${path.module}/scripts/wait-for-reboot.sh")
     fetch          = file("${path.module}/scripts/fetch-kubeconfig.sh")
     kubernetes     = var.kubernetes_version
@@ -197,6 +198,11 @@ resource "null_resource" "control_plane" {
   }
 
   provisioner "file" {
+    source      = "${path.module}/scripts/configure-ufw.sh"
+    destination = "/tmp/configure-ufw.sh"
+  }
+
+  provisioner "file" {
     content     = local.kubeadm_config
     destination = "/tmp/kubeadm-config.yaml"
   }
@@ -226,7 +232,7 @@ resource "null_resource" "control_plane" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo -n env KUBERNETES_VERSION='${var.kubernetes_version}' POD_CIDR='${var.pod_cidr}' KUBERNETES_APT_KEY_FINGERPRINT='${var.kubernetes_apt_key_fingerprint}' bash /var/lib/home-lab/install-control-plane.sh",
+      "sudo -n env KUBERNETES_VERSION='${var.kubernetes_version}' POD_CIDR='${var.pod_cidr}' SERVICE_CIDR='${var.service_cidr}' KUBERNETES_APT_KEY_FINGERPRINT='${var.kubernetes_apt_key_fingerprint}' bash /var/lib/home-lab/install-control-plane.sh",
     ]
   }
 

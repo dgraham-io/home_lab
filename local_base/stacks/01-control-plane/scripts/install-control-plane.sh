@@ -104,16 +104,9 @@ fi
 apt-mark hold kubelet kubeadm kubectl >/dev/null
 systemctl enable kubelet
 
-# Raspberry Pi OS often has UFW active with only SSH allowed. kubectl from the LAN
-# needs the API port. Leave the firewall alone when it is not already enabled.
-ufw_status="$(ufw status 2>/dev/null || true)"
-if command -v ufw >/dev/null && [[ "$ufw_status" == *"Status: active"* ]]; then
-  addr_lines="$(ip -4 -o addr show scope global)"
-  lan_cidr="$(awk '$2 != "flannel.1" { print $4; exit }' <<< "$addr_lines")"
-  if [[ -n "$lan_cidr" ]]; then
-    ufw allow from "$lan_cidr" to any port 6443 proto tcp comment "kubernetes api"
-    ufw allow from "$lan_cidr" to any port 8472 proto udp comment "flannel vxlan"
-  fi
+# Raspberry Pi OS often has UFW active with only SSH allowed.
+if [[ -f /var/lib/home-lab/configure-ufw.sh ]]; then
+  bash /var/lib/home-lab/configure-ufw.sh
 fi
 
 install -d -m 0755 /etc/kubernetes
@@ -138,6 +131,16 @@ if ! grep -q "\"Network\": \"${POD_CIDR}\"" "$flannel_manifest"; then
 fi
 kubectl apply -f "$flannel_manifest"
 kubectl -n kube-flannel rollout status daemonset/kube-flannel-ds --timeout=300s
+
+# Flannel installs CNI plugins in /opt/cni/bin. The kubelet on Raspberry Pi OS
+# looks only in /usr/lib/cni, so pod sandboxes fail until the plugins are linked there.
+mkdir -p /usr/lib/cni
+for plugin in /opt/cni/bin/*; do
+  name="$(basename "$plugin")"
+  if [[ ! -e "/usr/lib/cni/${name}" ]]; then
+    ln -s "$plugin" "/usr/lib/cni/${name}"
+  fi
+done
 kubectl wait --for=condition=Ready node --all --timeout=300s
 
 umask 077
