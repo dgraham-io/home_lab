@@ -40,6 +40,16 @@ terraform apply -var-file=../../inventory/terraform.tfvars
 
 Each worker is named from that inventory entry. Flannel is already installed on the cluster, so the new nodes become Ready without a separate network install. `terraform destroy` forgets the worker resources and leaves the nodes joined.
 
+`03-load-balancer` installs MetalLB and announces the `address_pool` from `inventory/terraform.tfvars`. A `LoadBalancer` Service receives one address from that range.
+
+```bash
+cd local_base/stacks/03-load-balancer
+terraform init
+terraform apply \
+  -var-file=../../inventory/terraform.tfvars \
+  -var kubeconfig_path=../01-control-plane/.generated/admin.conf
+```
+
 ## Manage
 
 From `local_base/stacks/01-control-plane`, install the admin kubeconfig for `kubectl`. This replaces `~/.kube/config`.

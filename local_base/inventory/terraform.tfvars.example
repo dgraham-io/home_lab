@@ -4,6 +4,9 @@ control_plane_gateway = "192.168.1.1"
 ssh_user              = "USERNAME"
 ssh_private_key_path  = "SSH_PRIVATE_KEY_FILE"
 
+# Inclusive range MetalLB may assign. Must not overlap node addresses.
+address_pool = "192.168.1.80-192.168.1.90"
+
 # Set ip to each machine's address. Set memory_gb to the RAM installed in that machine.
 workers = [
   {

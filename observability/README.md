@@ -8,10 +8,11 @@ terraform init
 terraform apply -var kubeconfig_path=../local_base/stacks/01-control-plane/.generated/admin.conf
 ```
 
-Grafana and Prometheus are NodePorts on every node. From the lab network, use a worker address. The Pi firewall does not allow these ports.
+Grafana and Prometheus are LoadBalancer services. MetalLB, installed by `local_base`, assigns each one an address from its pool. Grafana is port 80 and Prometheus is port 9090.
 
-- Grafana: `http://node1:30080` or `http://node2:30080`
-- Prometheus: `http://node1:30090` or `http://node2:30090`
+```bash
+kubectl -n monitoring get svc monitoring-grafana monitoring-kube-prometheus-prometheus
+```
 
 ```bash
 terraform output -raw grafana_admin_password

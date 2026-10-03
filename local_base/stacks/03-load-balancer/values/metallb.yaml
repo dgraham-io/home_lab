@@ -1,0 +1,7 @@
+# Layer 2 only. BGP is not used on this LAN.
+frrk8s:
+  enabled: false
+
+# Announce from the control-plane node as well as the workers.
+speaker:
+  tolerateMaster: true

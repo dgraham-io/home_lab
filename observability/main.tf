@@ -31,9 +31,7 @@ variable "chart_version" {
 }
 
 locals {
-  namespace            = "monitoring"
-  grafana_node_port    = 30080
-  prometheus_node_port = 30090
+  namespace = "monitoring"
 }
 
 resource "random_password" "grafana_admin" {
@@ -52,10 +50,7 @@ resource "helm_release" "kube_prometheus_stack" {
   timeout          = 900
 
   values = [
-    templatefile("${path.module}/values/kube-prometheus-stack.yaml", {
-      grafana_node_port    = local.grafana_node_port
-      prometheus_node_port = local.prometheus_node_port
-    }),
+    file("${path.module}/values/kube-prometheus-stack.yaml"),
   ]
 
   set_sensitive = [
@@ -82,12 +77,7 @@ output "grafana_admin_password" {
   sensitive   = true
 }
 
-output "grafana_url" {
-  description = "Grafana on any worker node IP."
-  value       = "http://<worker-ip>:${local.grafana_node_port}"
-}
-
-output "prometheus_url" {
-  description = "Prometheus on any worker node IP."
-  value       = "http://<worker-ip>:${local.prometheus_node_port}"
+output "service_addresses" {
+  description = "LoadBalancer addresses assigned to Grafana (port 80) and Prometheus (port 9090)."
+  value       = "kubectl --kubeconfig ${var.kubeconfig_path} --namespace ${local.namespace} get svc monitoring-grafana monitoring-kube-prometheus-prometheus"
 }

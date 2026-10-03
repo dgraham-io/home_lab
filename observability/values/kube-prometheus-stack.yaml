@@ -19,8 +19,7 @@ prometheus:
     ruleSelector: {}
     ruleNamespaceSelector: {}
   service:
-    type: NodePort
-    nodePort: ${prometheus_node_port}
+    type: LoadBalancer
 
 alertmanager:
   alertmanagerSpec:
@@ -31,8 +30,7 @@ grafana:
     enabled: false
   defaultDashboardsEnabled: true
   service:
-    type: NodePort
-    nodePort: ${grafana_node_port}
+    type: LoadBalancer
 
 # Scrape the tainted control-plane node as well as the workers.
 prometheus-node-exporter:

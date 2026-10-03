@@ -112,6 +112,7 @@ if command -v ufw >/dev/null && [[ "$ufw_status" == *"Status: active"* ]]; then
   lan_cidr="$(awk '$2 != "flannel.1" { print $4; exit }' <<< "$addr_lines")"
   if [[ -n "$lan_cidr" ]]; then
     ufw allow from "$lan_cidr" to any port 6443 proto tcp comment "kubernetes api"
+    ufw allow from "$lan_cidr" to any port 8472 proto udp comment "flannel vxlan"
   fi
 fi
 
