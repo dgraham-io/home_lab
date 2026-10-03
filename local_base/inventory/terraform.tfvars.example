@@ -1,6 +1,20 @@
 control_plane_ip      = "192.168.1.100"
 control_plane_subnet  = "192.168.1.0/24"
 control_plane_gateway = "192.168.1.1"
-ssh_user              = "pi"
-ssh_private_key_path  = "/home/you/.ssh/id_ed25519"
+ssh_user              = "USERNAME"
+ssh_private_key_path  = "SSH_PRIVATE_KEY_FILE"
+
+# Set ip to each machine's address. Set memory_gb to the RAM installed in that machine.
+workers = [
+  {
+    name      = "lab1"
+    ip        = "192.168.1.70"
+    memory_gb = 16
+  },
+  {
+    name      = "lab2"
+    ip        = "192.168.1.71"
+    memory_gb = 32
+  },
+]
 

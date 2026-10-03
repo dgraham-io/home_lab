@@ -6,16 +6,18 @@ This is a small configuration using a Raspberry Pi 5 as a kubernetes control pla
 - Raspberry Pi 5
   - 8GB RAM
   - 256GB SSD hat
-- Dell OptiPlex 7060 Micro
-  - 32GB RAM
-  - 512GB SSD
+- lab1 and lab2
+  - Intel
+  - Ubuntu 24.04.1 LTS Server
+  - 16GB and 32GB RAM
 
 ## Software
 - Raspberry Pi OS (64-bit) on the Pi
-- Ubuntu 26.04.1 LTS on the Dell
+- Ubuntu 24.04.1 LTS Server on lab1 and lab2
 - Terraform v1.15.9
 
 ## Setup
+Install and configure the appropriate OS for each system.
 
 
 ## Install
@@ -27,6 +29,16 @@ terraform apply -var-file=../../inventory/terraform.tfvars
 ```
 
 The admin kubeconfig and a 24-hour worker join command are written under `stacks/01-control-plane/.generated/`. `terraform destroy` forgets the Terraform resource and leaves the cluster installed.
+
+`02-workers` joins lab1 and lab2. Add their addresses and memory to `inventory/terraform.tfvars`, then:
+
+```bash
+cd local_base/stacks/02-workers
+terraform init
+terraform apply -var-file=../../inventory/terraform.tfvars
+```
+
+Each worker is named from that inventory entry. Flannel is already installed on the cluster, so the new nodes become Ready without a separate network install. `terraform destroy` forgets the worker resources and leaves the nodes joined.
 
 ## Manage
 

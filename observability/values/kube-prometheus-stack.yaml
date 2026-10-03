@@ -1,0 +1,41 @@
+# One replica and no persistent volumes so the release can install
+# before the cluster has a StorageClass. Metrics are lost when pods restart.
+prometheus:
+  prometheusSpec:
+    replicas: 1
+    retention: 7d
+    retentionSize: 8GB
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+    serviceMonitorNamespaceSelector: {}
+    podMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelector: {}
+    podMonitorNamespaceSelector: {}
+    ruleSelectorNilUsesHelmValues: false
+    ruleSelector: {}
+    ruleNamespaceSelector: {}
+  service:
+    type: NodePort
+    nodePort: ${prometheus_node_port}
+
+alertmanager:
+  alertmanagerSpec:
+    replicas: 1
+
+grafana:
+  persistence:
+    enabled: false
+  defaultDashboardsEnabled: true
+  service:
+    type: NodePort
+    nodePort: ${grafana_node_port}
+
+# Scrape the tainted control-plane node as well as the workers.
+prometheus-node-exporter:
+  tolerations:
+    - operator: Exists
+      effect: NoSchedule
